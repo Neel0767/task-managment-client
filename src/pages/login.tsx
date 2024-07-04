@@ -3,11 +3,12 @@ import Head from 'next/head';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import axiosInstance from '../utils/axiosInstance';
+import axios from 'axios';
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<{login?: string}>({});
 
   const router = useRouter();
 
@@ -26,8 +27,8 @@ export default function Login() {
       // Navigate to dashboard page
       router.push('/dashboard');
     } catch (error) {
-      if (error.response && error.response.data && error.response.data.message) {
-        setErrors({ login: error.response.data.message });
+      if (axios.isAxiosError(error)) {
+        setErrors({ login: error.response?.data.message });
       } else {
         alert('Login failed!');
       }

@@ -1,20 +1,37 @@
-// pages/team/index.js
 import Head from 'next/head';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { FaUsers } from 'react-icons/fa';
 import Layout from '@/layout/mainlayout';
 import axios from '@/utils/axiosInstance';
 
+interface Member {
+  id: string;
+  name: string;
+  role: string;
+  project: string;
+}
+
+interface Team {
+  id: string;
+  name: string;
+  description: string;
+  members: Member[];
+}
+
+interface User {
+  id: string;
+}
+
 export default function TeamPage() {
-  const [teams, setTeams] = useState([]);
-  const [selectedTeam, setSelectedTeam] = useState(null);
-  const [newTeam, setNewTeam] = useState({
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+  const [newTeam, setNewTeam] = useState<Omit<Team, 'id'>>({
     name: '',
     description: '',
     members: [],
   });
-  const [token, setToken] = useState(null);
-  const [userIds, setUserIds] = useState([]);
+  const [token, setToken] = useState<string | null>(null);
+  const [userIds, setUserIds] = useState<string[]>([]);
 
   // Fetch the access token from localStorage
   useEffect(() => {
@@ -27,8 +44,8 @@ export default function TeamPage() {
     const fetchTeams = async () => {
       if (token) {
         try {
-          const res = await axios.get('http://localhost:5000/teams');
-          setTeams(Array.isArray(res.data.data) ? res.data.data : []);
+          const res = await axios.get<{ data: Team[] }>('http://localhost:5000/teams');
+          setTeams(res.data.data);
         } catch (err) {
           console.error('Error fetching teams:', err);
         }
@@ -38,33 +55,31 @@ export default function TeamPage() {
     fetchTeams();
   }, [token]);
 
+  // Fetch user IDs from /get-users endpoint
+  useEffect(() => {
+    const fetchUserIds = async () => {
+      try {
+        const res = await axios.get<User[]>('http://localhost:5000/get-users');
 
-// Fetch user IDs from /get-users endpoint
-useEffect(() => {
-  const fetchUserIds = async () => {
-    try {
-      const res = await axios.get('http://localhost:5000/get-users');
-      
-      // Check if response data is an array
-      if (Array.isArray(res.data)) {
-        setUserIds(res.data.map(user => user.id));
-      } else if (res.data && typeof res.data === 'object') {
-        // Handle case where response is an object with users
-        setUserIds(Object.keys(res.data).map(key => res.data[key].id));
-      } else {
-        console.error('Invalid response format from /get-users:', res.data);
+        if (Array.isArray(res.data)) {
+          setUserIds(res.data.map(user => user.id));
+        } else if (res.data && typeof res.data === 'object') {
+          // Handle case where response is an object with users
+          setUserIds(Object.keys(res.data).map(key => res.data[key].id));
+        } else {
+          console.error('Invalid response format from /get-users:', res.data);
+        }
+      } catch (err) {
+        console.error('Error fetching user IDs:', err);
       }
-    } catch (err) {
-      console.error('Error fetching user IDs:', err);
-    }
-  };
-  fetchUserIds();
-}, []);
+    };
+    fetchUserIds();
+  }, []);
 
   // Fetch team details by ID
-  const fetchTeamDetails = async (teamId) => {
+  const fetchTeamDetails = async (teamId: string) => {
     try {
-      const res = await axios.get(`http://localhost:5000/teams/${teamId}`);
+      const res = await axios.get<Team>(`http://localhost:5000/teams/${teamId}`);
       setSelectedTeam(res.data);
     } catch (err) {
       console.error('Error fetching team details:', err);
@@ -72,20 +87,19 @@ useEffect(() => {
   };
 
   // Handle input changes for new team form
-  const handleInputChange = (e, index, field) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>, index: number, field: keyof Member) => {
     const { value } = e.target;
     const updatedMembers = [...newTeam.members];
     updatedMembers[index][field] = value;
     setNewTeam({ ...newTeam, members: updatedMembers });
   };
 
-
   // Handle input changes for new team name and description
-  const handleNameChange = (e) => {
+  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNewTeam({ ...newTeam, name: e.target.value });
   };
 
-  const handleDescriptionChange = (e) => {
+  const handleDescriptionChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNewTeam({ ...newTeam, description: e.target.value });
   };
 
@@ -95,9 +109,9 @@ useEffect(() => {
       const teamData = {
         name: newTeam.name,
         description: newTeam.description,
-        members: newTeam.members.map((member) => member.id), // Use member IDs fetched from /get-users
+        members: newTeam.members.map(member => member.id), // Use member IDs fetched from /get-users
       };
-      const res = await axios.post('http://localhost:5000/teams', teamData);
+      const res = await axios.post<Team>('http://localhost:5000/teams', teamData);
       console.log('Team added:', res.data);
       setTeams([...teams, res.data]);
       setNewTeam({
@@ -208,6 +222,6 @@ useEffect(() => {
   );
 }
 
-TeamPage.getLayout = function getLayout(page) {
+TeamPage.getLayout = function getLayout(page: React.ReactElement) {
   return <Layout>{page}</Layout>;
 };
