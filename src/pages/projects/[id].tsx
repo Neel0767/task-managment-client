@@ -1,18 +1,34 @@
-// pages/projects/[projectId].js
+// pages/projects/[projectId].tsx
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import Layout from '@/layout/mainlayout';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import axios from '@/utils/axiosInstance';
 import { FaEdit, FaTrashAlt, FaEye, FaSave } from 'react-icons/fa';
 
+interface Task {
+  id: string;
+  title: string;
+  description: string;
+  assignedTeam: string;
+  status: string;
+}
+
+interface Project {
+  id: string;
+  title: string;
+  description: string;
+  status: string;
+  tasks: Task[];
+}
+
 export default function ProjectDetail() {
   const router = useRouter();
-  const projectId = router.query.id;
-  const [project, setProject] = useState(null);
+  const projectId = router.query.id as string;
+  const [project, setProject] = useState<Project | null>(null);
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState(null);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   useEffect(() => {
     if (projectId) {
@@ -29,17 +45,19 @@ export default function ProjectDetail() {
     }
   }, [projectId]);
 
-  const handleEditTask = (task) => {
+  const handleEditTask = (task: Task) => {
     setSelectedTask(task);
     setEditModalOpen(true);
   };
 
-  const handleViewTask = (task) => {
+  const handleViewTask = (task: Task) => {
     setSelectedTask(task);
     setViewModalOpen(true);
   };
 
   const handleSaveEditTask = async () => {
+    if (!selectedTask) return;
+
     try {
       const res = await axios.put(`http://localhost:5000/tasks/${selectedTask.id}`, selectedTask);
       console.log('Task updated:', res.data);
@@ -49,7 +67,7 @@ export default function ProjectDetail() {
     }
   };
 
-  const handleDeleteTask = async (taskId) => {
+  const handleDeleteTask = async (taskId: string) => {
     try {
       await axios.delete(`http://localhost:5000/tasks/${taskId}`);
       console.log('Task deleted:', taskId);
@@ -67,12 +85,14 @@ export default function ProjectDetail() {
   };
 
   const handleSaveEditProject = async () => {
+    if (!project) return;
+
     try {
       const updatedProject = {
         title: project.title,
         description: project.description,
       };
-  
+
       const res = await axios.put(`http://localhost:5000/projects/${projectId}`, updatedProject);
       console.log('Project updated:', res.data);
       setEditModalOpen(false);
@@ -80,7 +100,6 @@ export default function ProjectDetail() {
       console.error('Error updating project:', err);
     }
   };
-  
 
   const handleDeleteProject = async () => {
     try {
@@ -149,22 +168,20 @@ export default function ProjectDetail() {
           </div>
         </div>
 
-        {viewModalOpen && (
+        {viewModalOpen && selectedTask && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
             <div className="bg-white p-6 rounded-lg shadow-md">
               <h2 className="text-xl font-bold text-gray-700 mb-4">Task Details</h2>
-              {selectedTask && (
-                <div className="flex flex-col space-y-4">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-700">Task Name:</h3>
-                    <p className="text-gray-700">{selectedTask.title}</p>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-700">Assigned Team:</h3>
-                    <p className="text-gray-700">{selectedTask.assignedTeam}</p>
-                  </div>
+              <div className="flex flex-col space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-700">Task Name:</h3>
+                  <p className="text-gray-700">{selectedTask.title}</p>
                 </div>
-              )}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-700">Assigned Team:</h3>
+                  <p className="text-gray-700">{selectedTask.assignedTeam}</p>
+                </div>
+              </div>
               <div className="flex justify-end mt-4">
                 <button onClick={closeModal} className="p-2 bg-gray-300 text-gray-700 rounded">
                   Close
@@ -185,7 +202,9 @@ export default function ProjectDetail() {
                     <input
                       type="text"
                       value={selectedTask.title}
-                      onChange={(e) => setSelectedTask({ ...selectedTask, title: e.target.value })}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        setSelectedTask({ ...selectedTask, title: e.target.value })
+                      }
                       className="p-2 border rounded"
                     />
                   </div>
@@ -194,7 +213,9 @@ export default function ProjectDetail() {
                     <input
                       type="text"
                       value={selectedTask.description}
-                      onChange={(e) => setSelectedTask({ ...selectedTask, description: e.target.value })}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        setSelectedTask({ ...selectedTask, description: e.target.value })
+                      }
                       className="p-2 border rounded"
                     />
                   </div>
@@ -215,7 +236,9 @@ export default function ProjectDetail() {
                     <input
                       type="text"
                       value={project.title}
-                      onChange={(e) => setProject({ ...project, title: e.target.value })}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        setProject({ ...project, title: e.target.value })
+                      }
                       className="p-2 border rounded"
                     />
                   </div>
@@ -224,7 +247,9 @@ export default function ProjectDetail() {
                     <input
                       type="text"
                       value={project.description}
-                      onChange={(e) => setProject({ ...project, description: e.target.value })}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        setProject({ ...project, description: e.target.value })
+                      }
                       className="p-2 border rounded"
                     />
                   </div>
@@ -280,7 +305,7 @@ export default function ProjectDetail() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="4" className="text-center py-4">No Tasks Available</td>
+                  <td colSpan={4} className="text-center py-4">No Tasks Available</td>
                 </tr>
               )}
             </tbody>
@@ -291,6 +316,6 @@ export default function ProjectDetail() {
   );
 }
 
-ProjectDetail.getLayout = function getLayout(page) {
+ProjectDetail.getLayout = function getLayout(page: React.ReactNode) {
   return <Layout>{page}</Layout>;
 };
