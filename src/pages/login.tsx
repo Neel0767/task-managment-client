@@ -1,4 +1,3 @@
-// pages/login.js
 import Head from 'next/head';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
@@ -9,24 +8,25 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{login?: string}>({});
-
+  const [isLoading, setIsLoading] = useState(false); // State to manage loading status
+  const [showLoading, setShowLoading] = useState(false); // State to manage loading indicator visibility
   const router = useRouter();
 
   const handleLogin = async () => {
+    setIsLoading(true); // Start loading process
     try {
       const response = await axiosInstance.post('/auth/login', {
         email: username,
         password,
       });
 
-      const  accessToken  = response.data.data.accessToken;
+      const accessToken = response.data.data.accessToken;
       localStorage.setItem('accessToken', accessToken);
 
-      alert('Login successful!');
-
-      // Navigate to dashboard page
-      router.push('/dashboard');
+      setIsLoading(false); // Stop loading after successful login
+      router.push('/dashboard'); // Redirect to dashboard
     } catch (error) {
+      setIsLoading(false); // Stop loading on error
       if (axios.isAxiosError(error)) {
         setErrors({ login: error.response?.data.message });
       } else {
@@ -83,12 +83,26 @@ export default function Login() {
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="button"
               onClick={handleLogin}
+              disabled={isLoading || showLoading} // Disable button when loading or showLoading is true
             >
               Sign In
             </button>
           </div>
         </form>
       </div>
+
+      {/* Loading indicator */}
+      {showLoading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-md max-w-sm">
+            <p className="text-gray-700">Loading...</p>
+            {/* Simulating loading with a spinner */}
+            <div className="flex justify-center mt-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

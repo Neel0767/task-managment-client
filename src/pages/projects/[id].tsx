@@ -268,49 +268,7 @@ export default function ProjectDetail() {
           </div>
         )}
 
-        <div>
-          <table className="min-w-full bg-white border-gray-200 shadow-md rounded-lg overflow-hidden">
-            <thead className="bg-gray-100 text-gray-800">
-              <tr>
-                <th className="py-2 px-4 border">Task Name</th>
-                <th className="py-2 px-4 border">Assigned Team</th>
-                <th className="py-2 px-4 border">Status</th>
-                <th className="py-2 px-4 border">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="text-gray-700">
-              {project.tasks && project.tasks.length ? (
-                project.tasks.map((task) => (
-                  <tr key={task.id}>
-                    <td className="py-2 px-4 border">{task.title}</td>
-                    <td className="py-2 px-4 border">{task.assignedTeam}</td>
-                    <td className="py-2 px-4 border">{task.status}</td>
-                    <td className="py-2 px-4 border">
-                      <div className="flex space-x-2">
-                        <button onClick={() => handleViewTask(task)} className="p-2 bg-blue-500 text-white rounded">
-                          <FaEye />
-                          <span className="ml-2">View</span>
-                        </button>
-                        <button onClick={() => handleEditTask(task)} className="p-2 bg-yellow-500 text-white rounded">
-                          <FaEdit />
-                          <span className="ml-2">Edit</span>
-                        </button>
-                        <button onClick={() => handleDeleteTask(task.id)} className="p-2 bg-red-500 text-white rounded">
-                          <FaTrashAlt />
-                          <span className="ml-2">Delete</span>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={4} className="text-center py-4">No Tasks Available</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+        
       </main>
     </div>
   );
