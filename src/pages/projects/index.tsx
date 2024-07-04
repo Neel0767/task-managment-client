@@ -3,7 +3,7 @@ import Layout from "@/layout/mainlayout";
 import { FaPlus } from 'react-icons/fa';
 import { useState, useEffect, ChangeEvent } from 'react';
 import axios from '@/utils/axiosInstance';
-import  AxiosResponse  from '@/utils/axiosInstance';
+import type { AxiosResponse } from 'axios';
 
 
 interface Project {

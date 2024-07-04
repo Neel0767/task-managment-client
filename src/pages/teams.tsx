@@ -59,28 +59,21 @@ export default function TeamPage() {
   useEffect(() => {
     const fetchUserIds = async () => {
       try {
-        const res = await axios.get<User[]>('http://localhost:5000/get-users');
-
-        if (Array.isArray(res.data)) {
-          setUserIds(res.data.map(user => user.id));
-        } else if (res.data && typeof res.data === 'object') {
-          // Handle case where response is an object with users
-          setUserIds(Object.keys(res.data).map(key => res.data[key].id));
-        } else {
-          console.error('Invalid response format from /get-users:', res.data);
-        }
+        const res = await axios.get<{ data: User[] }>('http://localhost:5000/get-users');
+        setUserIds(res.data.data.map(user => user.id));
       } catch (err) {
         console.error('Error fetching user IDs:', err);
       }
     };
+
     fetchUserIds();
   }, []);
 
   // Fetch team details by ID
   const fetchTeamDetails = async (teamId: string) => {
     try {
-      const res = await axios.get<Team>(`http://localhost:5000/teams/${teamId}`);
-      setSelectedTeam(res.data);
+      const res = await axios.get<{ data: Team }>(`http://localhost:5000/teams/${teamId}`);
+      setSelectedTeam(res.data.data);
     } catch (err) {
       console.error('Error fetching team details:', err);
     }
@@ -111,9 +104,9 @@ export default function TeamPage() {
         description: newTeam.description,
         members: newTeam.members.map(member => member.id), // Use member IDs fetched from /get-users
       };
-      const res = await axios.post<Team>('http://localhost:5000/teams', teamData);
-      console.log('Team added:', res.data);
-      setTeams([...teams, res.data]);
+      const res = await axios.post<{ data: Team }>('http://localhost:5000/teams', teamData);
+      console.log('Team added:', res.data.data);
+      setTeams([...teams, res.data.data]);
       setNewTeam({
         name: '',
         description: '',
