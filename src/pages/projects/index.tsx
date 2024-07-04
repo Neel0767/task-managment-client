@@ -1,15 +1,24 @@
 import { useRouter } from 'next/router';
 import Layout from "@/layout/mainlayout";
 import { FaPlus } from 'react-icons/fa';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import axios from '@/utils/axiosInstance';
-import { AxiosResponse } from 'axios';
+import  AxiosResponse  from '@/utils/axiosInstance';
+
+
+interface Project {
+  id: number;
+  title: string;
+  description: string;
+  assignedTeam: string;
+  status: string;
+}
 
 export default function Projects() {
   const router = useRouter();
   const { projectId } = router.query;
-  const [projects, setProjects] = useState([]);
-  const [newProject, setNewProject] = useState({
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [newProject, setNewProject] = useState<Omit<Project, 'id'>>({
     title: '',
     description: '',
     assignedTeam: '',
@@ -19,7 +28,7 @@ export default function Projects() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/projects');
+        const res: AxiosResponse<{ data: Project[] }> = await axios.get('http://localhost:5000/projects');
         setProjects(res.data.data);
       } catch (err) {
         console.log(err);
@@ -29,14 +38,14 @@ export default function Projects() {
     fetchProjects();
   }, []);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setNewProject({ ...newProject, [name]: value });
   };
 
   const handleAddProject = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/projects', newProject);
+      const response: AxiosResponse<{ data: Project }> = await axios.post('http://localhost:5000/projects', newProject);
       setProjects([...projects, response.data.data]);
       setNewProject({ title: '', description: '', assignedTeam: '', status: '' });
     } catch (err) {
@@ -76,7 +85,7 @@ export default function Projects() {
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan="5" className="text-center py-4">No Data</td>
+                  <td colSpan={5} className="text-center py-4">No Data</td>
                 </tr>
               )}
             </tbody>
