@@ -1,11 +1,25 @@
-// pages/task/[taskId].js
+// pages/task/[taskId].tsx
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import Sidebar from '@/components/sidebar';
 import Layout from '@/layout/mainlayout';
 import axiosInstance from '@/utils/axiosInstance';
+import { GetServerSideProps } from 'next';
 
-export default function TaskDetail({ task }) {
+interface Task {
+  id: string;
+  priority: string;
+  status: string;
+  description: string;
+  name: string;
+  feedback: string;
+}
+
+interface TaskDetailProps {
+  task: Task | null;
+}
+
+export default function TaskDetail({ task }: TaskDetailProps) {
   const router = useRouter();
   const { taskId } = router.query;
 
@@ -76,7 +90,7 @@ export default function TaskDetail({ task }) {
   );
 }
 
-TaskDetail.getLayout = function getLayout(page) {
+TaskDetail.getLayout = function getLayout(page: React.ReactElement) {
   return (
     <Layout>
       {page}
@@ -84,12 +98,12 @@ TaskDetail.getLayout = function getLayout(page) {
   );
 };
 
-export async function getServerSideProps(context) {
-  const { taskId } = context.params;
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { taskId } = context.params as { taskId: string };
 
   try {
-    const response = await axiosInstance.get(`/tasks/${taskId}`);
-    const task = response.data;
+    const response = await axiosInstance.get<{ data: Task }>(`/tasks/${taskId}`);
+    const task = response.data.data;
     return {
       props: { task },
     };
@@ -99,4 +113,4 @@ export async function getServerSideProps(context) {
       props: { task: null },
     };
   }
-}
+};

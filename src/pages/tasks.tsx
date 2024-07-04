@@ -1,46 +1,56 @@
-// pages/task/index.js
+// pages/task/index.tsx
 import Head from 'next/head';
-import { useState } from 'react';
-import Sidebar from '@/components/sidebar';
-import Layout from '@/layout/mainlayout';
+import { useState, ChangeEvent } from 'react';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
+import Layout from '@/layout/mainlayout';
+
+interface Task {
+  id: number;
+  priority: string;
+  status: string;
+  name: string;
+}
 
 export default function Tasks() {
-  const [tasks, setTasks] = useState([
+  const [tasks, setTasks] = useState<Task[]>([
     { id: 1, priority: 'High', status: 'In Progress', name: 'Project Alpha' },
     { id: 2, priority: 'Medium', status: 'Pending', name: 'Project Beta' },
     { id: 3, priority: 'Low', status: 'Done', name: 'Project Gamma' },
   ]);
 
-  const [newTask, setNewTask] = useState({ id: '', priority: '', status: '', name: '' });
-  const [editingTask, setEditingTask] = useState(null);
+  const [newTask, setNewTask] = useState<Task>({ id: 0, priority: '', status: '', name: '' });
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setNewTask({ ...newTask, [name]: value });
   };
 
-  const handleEditChange = (e) => {
+  const handleEditChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setEditingTask({ ...editingTask, [name]: value });
+    if (editingTask) {
+      setEditingTask({ ...editingTask, [name]: value });
+    }
   };
 
   const handleAddTask = () => {
     setTasks([...tasks, newTask]);
-    setNewTask({ id: '', priority: '', status: '', name: '' });
+    setNewTask({ id: 0, priority: '', status: '', name: '' });
   };
 
-  const handleEditTask = (task) => {
+  const handleEditTask = (task: Task) => {
     setEditingTask(task);
   };
 
   const handleUpdateTask = () => {
-    setTasks(tasks.map((task) => (task.id === editingTask.id ? editingTask : task)));
-    setEditingTask(null);
+    if (editingTask) {
+      setTasks(tasks.map(t => (t.id === editingTask.id ? editingTask : t)));
+      setEditingTask(null);
+    }
   };
 
-  const handleDeleteTask = (taskId) => {
-    setTasks(tasks.filter((task) => task.id !== taskId));
+  const handleDeleteTask = (taskId: number) => {
+    setTasks(tasks.filter(t => t.id !== taskId));
   };
 
   return (
@@ -180,6 +190,6 @@ export default function Tasks() {
   );
 }
 
-Tasks.getLayout = function getLayout(page) {
+Tasks.getLayout = function getLayout(page: React.ReactElement) {
   return <Layout>{page}</Layout>;
 };
