@@ -1,13 +1,16 @@
-import Head from 'next/head';
-import { useState } from 'react';
-import { useRouter } from 'next/router';
-import axiosInstance from '../utils/axiosInstance';
-import axios from 'axios';
+import Head from "next/head";
+import { useState } from "react";
+import { useRouter } from "next/router";
+import axiosInstance from "../utils/axiosInstance";
+import axios from "axios";
+import { SiGoogletagmanager } from "react-icons/si";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState<{login?: string}>({});
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<{ login?: string }>({});
   const [isLoading, setIsLoading] = useState(false); // State to manage loading status
   const [showLoading, setShowLoading] = useState(false); // State to manage loading indicator visibility
   const router = useRouter();
@@ -15,22 +18,22 @@ export default function Login() {
   const handleLogin = async () => {
     setIsLoading(true); // Start loading process
     try {
-      const response = await axiosInstance.post('/auth/login', {
+      const response = await axiosInstance.post("/auth/login", {
         email: username,
         password,
       });
 
       const accessToken = response.data.data.accessToken;
-      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem("accessToken", accessToken);
 
       setIsLoading(false); // Stop loading after successful login
-      router.push('/dashboard'); // Redirect to dashboard
+      router.push("/dashboard"); // Redirect to dashboard
     } catch (error) {
       setIsLoading(false); // Stop loading on error
       if (axios.isAxiosError(error)) {
         setErrors({ login: error.response?.data.message });
       } else {
-        alert('Login failed!');
+        alert("Login failed!");
       }
     }
   };
@@ -42,34 +45,46 @@ export default function Login() {
       </Head>
 
       <div className="flex flex-col items-center mb-8">
-        <span className="text-3xl font-bold text-gray-700">Task Management App</span>
+        <SiGoogletagmanager className="text-7xl text-gray-700" />
+        <span className="text-3xl font-bold text-gray-700">
+          Task Management App
+        </span>
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-sm">
-        <div className="flex items-center justify-center mb-4">
-          <h2 className="text-xl font-bold text-gray-700">Login</h2>
-          <img src="/login.png" alt="Logo" width={40} height={40} className="ml-2" />
+        <div className="flex flex-col items-center justify-center mb-4">
+          <h2 className="text-2xl font-bold text-gray-700">Welcome Back</h2>
+          <p className="text-gray-500">Please enter your details.</p>
         </div>
-        <form onSubmit={(e) => e.preventDefault()}>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
-              Username
+        <form
+          className="flex flex-col gap-4"
+          onSubmit={(e) => e.preventDefault()}
+        >
+          <div>
+            <label
+              className="text-gray-700 text-sm font-semibold block mb-2"
+              htmlFor="username"
+            >
+              Email
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="block w-full"
               id="username"
               type="text"
-              placeholder="Username"
+              placeholder="yourmail@gmail.com"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>
-          <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+          <div>
+            <label
+              className="text-gray-700 text-sm font-semibold block mb-2"
+              htmlFor="password"
+            >
               Password
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+              className="block w-full"
               id="password"
               type="password"
               placeholder="********"
@@ -77,10 +92,12 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          {errors.login && <p className="text-red-500 text-xs italic">{errors.login}</p>}
+          {errors.login && (
+            <p className="text-red-500 text-xs italic">{errors.login}</p>
+          )}
           <div className="flex items-center justify-between">
             <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="btn w-full"
               type="button"
               onClick={handleLogin}
               disabled={isLoading || showLoading} // Disable button when loading or showLoading is true
@@ -89,6 +106,12 @@ export default function Login() {
             </button>
           </div>
         </form>
+        <div className="mt-4">
+          <p className="text-gray-500 text-sm text-center">
+            Not a registered user?{" "}
+            <Link className="link" href={"/register"}>Register Now</Link>
+          </p>
+        </div>
       </div>
 
       {/* Loading indicator */}

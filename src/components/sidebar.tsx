@@ -1,4 +1,4 @@
-import { RiTeamLine } from "react-icons/ri";    
+import { RiTeamLine } from "react-icons/ri";
 import { FaTasks } from "react-icons/fa";
 import { VscProject } from "react-icons/vsc";
 import { SiGoogletagmanager } from "react-icons/si";
@@ -6,25 +6,25 @@ import Link from "next/link";
 
 export default function Sidebar() {
   return (
-    <aside className="bg-white w-64 p-6 shadow-md">
-      <div className="flex items-center gap-1.5 mb-4">
-        <SiGoogletagmanager size={18} color="rgb(27 111 195)"/>
-      <h2 className="text-lg font-bold text-gray-700">
-        Task Management
-    </h2>
-
-      </div>
-      <ul className="text-center">
-        <li className="mb-2 my-4 text-gray-700 font-semibold flex items-center">
-          <VscProject className="text-2xl" />
+    <aside className="bg-white w-72 shadow-xl">
+      <Link
+        href={"/dashboard"}
+        className="flex items-center gap-2 mb-4 p-4 border-b-2"
+      >
+        <SiGoogletagmanager className="text-2xl text-sky-600" />
+        <h3 className="text-xl font-bold text-slate-700">Task Management</h3>
+      </Link>
+      <ul className="flex flex-col gap-4 mt-4 px-4">
+        <li className="text-gray-700 font-semibold flex gap-2 items-center hover:text-sky-500 transition">
+          <VscProject className="text-lg" />
           <Link href={"/projects"}>Projects</Link>
         </li>
-        <li className="mb-2 my-4 text-gray-700 font-semibold flex items-center">
-          <FaTasks className="text-2xl" />
+        <li className="text-gray-700 font-semibold flex gap-2 items-center hover:text-sky-500 transition">
+          <FaTasks className="text-lg" />
           <Link href={"/tasks"}>Tasks</Link>
         </li>
-        <li className="mb-2 my-4 text-gray-700 font-semibold flex items-center">
-          <RiTeamLine className="text-2xl" />
+        <li className="text-gray-700 font-semibold flex gap-2 items-center hover:text-sky-500 transition">
+          <RiTeamLine className="text-lg" />
           <Link href={"/teams"}>Teams</Link>
         </li>
       </ul>

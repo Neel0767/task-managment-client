@@ -1,11 +1,10 @@
 // pages/projects/[projectId].tsx
-import Head from 'next/head';
-import { useRouter } from 'next/router';
-import Layout from '@/layout/mainlayout';
-import { useState, useEffect, ChangeEvent } from 'react';
-import axios from '@/utils/axiosInstance';
-import { FaEdit, FaTrashAlt, FaEye, FaSave } from 'react-icons/fa';
-
+import Head from "next/head";
+import { useRouter } from "next/router";
+import Layout from "@/layout/mainlayout";
+import { useState, useEffect, ChangeEvent } from "react";
+import axios from "@/utils/axiosInstance";
+import { FaEdit, FaTrashAlt, FaEye, FaSave } from "react-icons/fa";
 interface Task {
   id: string;
   title: string;
@@ -34,7 +33,7 @@ export default function ProjectDetail() {
     if (projectId) {
       const fetchProject = async () => {
         try {
-          const res = await axios.get(`http://localhost:5000/projects/${projectId}`);
+          const res = await axios.get(`/projects/${projectId}`);
           setProject(res.data.data);
         } catch (err) {
           console.log(err);
@@ -59,24 +58,29 @@ export default function ProjectDetail() {
     if (!selectedTask) return;
 
     try {
-      const res = await axios.put(`http://localhost:5000/tasks/${selectedTask.id}`, selectedTask);
-      console.log('Task updated:', res.data);
+      const res = await axios.put(
+        `http://localhost:5000/tasks/${selectedTask.id}`,
+        selectedTask
+      );
+      console.log("Task updated:", res.data);
       setEditModalOpen(false);
     } catch (err) {
-      console.error('Error updating task:', err);
+      console.error("Error updating task:", err);
     }
   };
 
   const handleDeleteTask = async (taskId: string) => {
     try {
       await axios.delete(`http://localhost:5000/tasks/${taskId}`);
-      console.log('Task deleted:', taskId);
+      console.log("Task deleted:", taskId);
       setViewModalOpen(false);
       // Refresh the project to update the tasks list
-      const res = await axios.get(`http://localhost:5000/projects/${projectId}`);
+      const res = await axios.get(
+        `http://localhost:5000/projects/${projectId}`
+      );
       setProject(res.data.data);
     } catch (err) {
-      console.error('Error deleting task:', err);
+      console.error("Error deleting task:", err);
     }
   };
 
@@ -93,21 +97,24 @@ export default function ProjectDetail() {
         description: project.description,
       };
 
-      const res = await axios.put(`http://localhost:5000/projects/${projectId}`, updatedProject);
-      console.log('Project updated:', res.data);
+      const res = await axios.put(
+        `http://localhost:5000/projects/${projectId}`,
+        updatedProject
+      );
+      console.log("Project updated:", res.data);
       setEditModalOpen(false);
     } catch (err) {
-      console.error('Error updating project:', err);
+      console.error("Error updating project:", err);
     }
   };
 
   const handleDeleteProject = async () => {
     try {
       await axios.delete(`http://localhost:5000/projects/${projectId}`);
-      console.log('Project deleted:', projectId);
-      router.push('/projects'); // Redirect to projects list after deletion
+      console.log("Project deleted:", projectId);
+      router.push("/projects"); // Redirect to projects list after deletion
     } catch (err) {
-      console.error('Error deleting project:', err);
+      console.error("Error deleting project:", err);
     }
   };
 
@@ -121,11 +128,11 @@ export default function ProjectDetail() {
     return <div>Loading...</div>;
   }
 
-  let statusColor = 'bg-yellow-500';
-  if (project.status === 'pending') {
-    statusColor = 'bg-red-500';
-  } else if (project.status === 'done') {
-    statusColor = 'bg-green-500';
+  let statusColor = "bg-yellow-500";
+  if (project.status === "pending") {
+    statusColor = "bg-red-500";
+  } else if (project.status === "done") {
+    statusColor = "bg-green-500";
   }
 
   return (
@@ -136,30 +143,34 @@ export default function ProjectDetail() {
 
       <main className="flex-1 p-6">
         <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-          <h2 className="text-xl font-bold text-gray-700 mb-4">Project Details</h2>
+          <h2 className="text-xl font-bold text-gray-700 mb-4">
+            Project Details
+          </h2>
           <div className="flex flex-col space-y-4">
             <div>
               <h3 className="text-lg font-semibold text-gray-700">Title:</h3>
               <p className="text-gray-700">{project.title}</p>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-700">Description:</h3>
+              <h3 className="text-lg font-semibold text-gray-700">
+                Description:
+              </h3>
               <p className="text-gray-700">{project.description}</p>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-700">Status:</h3>
-              <span className={`inline-block py-1 px-2 rounded-lg text-white ${statusColor} mt-1`}>
-                {project.status}
-              </span>
-            </div>
-            <div>
               <h3 className="text-lg font-semibold text-gray-700">Actions:</h3>
-              <div className="flex space-x-2">
-                <button onClick={handleEditProject} className="p-2 bg-yellow-500 text-white rounded">
+              <div className="flex space-x-2 items-center">
+                <button
+                  onClick={handleEditProject}
+                  className="flex items-center gap-1 p-2 bg-yellow-500 text-white rounded"
+                >
                   <FaEdit />
                   <span className="ml-2">Edit</span>
                 </button>
-                <button onClick={handleDeleteProject} className="p-2 bg-red-500 text-white rounded">
+                <button
+                  onClick={handleDeleteProject}
+                  className="flex items-center gap-1 p-2 bg-red-500 text-white rounded"
+                >
                   <FaTrashAlt />
                   <span className="ml-2">Delete</span>
                 </button>
@@ -171,19 +182,28 @@ export default function ProjectDetail() {
         {viewModalOpen && selectedTask && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
             <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-bold text-gray-700 mb-4">Task Details</h2>
+              <h2 className="text-xl font-bold text-gray-700 mb-4">
+                Task Details
+              </h2>
               <div className="flex flex-col space-y-4">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-700">Task Name:</h3>
+                  <h3 className="text-lg font-semibold text-gray-700">
+                    Task Name:
+                  </h3>
                   <p className="text-gray-700">{selectedTask.title}</p>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-700">Assigned Team:</h3>
+                  <h3 className="text-lg font-semibold text-gray-700">
+                    Assigned Team:
+                  </h3>
                   <p className="text-gray-700">{selectedTask.assignedTeam}</p>
                 </div>
               </div>
               <div className="flex justify-end mt-4">
-                <button onClick={closeModal} className="p-2 bg-gray-300 text-gray-700 rounded">
+                <button
+                  onClick={closeModal}
+                  className="p-2 bg-gray-300 text-gray-700 rounded"
+                >
                   Close
                 </button>
               </div>
@@ -194,37 +214,55 @@ export default function ProjectDetail() {
         {editModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
             <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-bold text-gray-700 mb-4">{selectedTask ? 'Edit Task' : 'Edit Project'}</h2>
+              <h2 className="text-xl font-bold text-gray-700 mb-4">
+                {selectedTask ? "Edit Task" : "Edit Project"}
+              </h2>
               {selectedTask ? (
                 <div className="flex flex-col space-y-4">
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-700">Task Name:</h3>
+                    <h3 className="text-lg font-semibold text-gray-700">
+                      Task Name:
+                    </h3>
                     <input
                       type="text"
                       value={selectedTask.title}
                       onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                        setSelectedTask({ ...selectedTask, title: e.target.value })
+                        setSelectedTask({
+                          ...selectedTask,
+                          title: e.target.value,
+                        })
                       }
                       className="p-2 border rounded"
                     />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-700">Description:</h3>
+                    <h3 className="text-lg font-semibold text-gray-700">
+                      Description:
+                    </h3>
                     <input
                       type="text"
                       value={selectedTask.description}
                       onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                        setSelectedTask({ ...selectedTask, description: e.target.value })
+                        setSelectedTask({
+                          ...selectedTask,
+                          description: e.target.value,
+                        })
                       }
                       className="p-2 border rounded"
                     />
                   </div>
                   <div className="flex justify-end mt-4">
-                    <button onClick={handleSaveEditTask} className="p-2 bg-blue-500 text-white rounded">
+                    <button
+                      onClick={handleSaveEditTask}
+                      className="p-2 bg-blue-500 text-white rounded"
+                    >
                       <FaSave />
                       <span className="ml-2">Save</span>
                     </button>
-                    <button onClick={closeModal} className="p-2 bg-gray-300 text-gray-700 rounded ml-2">
+                    <button
+                      onClick={closeModal}
+                      className="p-2 bg-gray-300 text-gray-700 rounded ml-2"
+                    >
                       Cancel
                     </button>
                   </div>
@@ -232,7 +270,9 @@ export default function ProjectDetail() {
               ) : (
                 <div className="flex flex-col space-y-4">
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-700">Project Title:</h3>
+                    <h3 className="text-lg font-semibold text-gray-700">
+                      Project Title:
+                    </h3>
                     <input
                       type="text"
                       value={project.title}
@@ -243,7 +283,9 @@ export default function ProjectDetail() {
                     />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-700">Project Description:</h3>
+                    <h3 className="text-lg font-semibold text-gray-700">
+                      Project Description:
+                    </h3>
                     <input
                       type="text"
                       value={project.description}
@@ -254,11 +296,17 @@ export default function ProjectDetail() {
                     />
                   </div>
                   <div className="flex justify-end mt-4">
-                    <button onClick={handleSaveEditProject} className="p-2 bg-blue-500 text-white rounded">
+                    <button
+                      onClick={handleSaveEditProject}
+                      className="p-2 bg-blue-500 text-white rounded"
+                    >
                       <FaSave />
                       <span className="ml-2">Save</span>
                     </button>
-                    <button onClick={closeModal} className="p-2 bg-gray-300 text-gray-700 rounded ml-2">
+                    <button
+                      onClick={closeModal}
+                      className="p-2 bg-gray-300 text-gray-700 rounded ml-2"
+                    >
                       Cancel
                     </button>
                   </div>
@@ -267,8 +315,6 @@ export default function ProjectDetail() {
             </div>
           </div>
         )}
-
-        
       </main>
     </div>
   );

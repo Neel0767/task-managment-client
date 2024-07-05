@@ -1,44 +1,43 @@
 // pages/register.js
-import Head from 'next/head';
-import { useState } from 'react';
-import axiosInstance from '@/utils/axiosInstance';
-import { useRouter } from 'next/router';
-import axios, { AxiosError } from 'axios';
+import Head from "next/head";
+import { useState } from "react";
+import axiosInstance from "@/utils/axiosInstance";
+import { useRouter } from "next/router";
+import axios, { AxiosError } from "axios";
+import { SiGoogletagmanager } from "react-icons/si";
+import Link from "next/link";
 
 export default function Register() {
+  const router = useRouter();
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  const router  = useRouter();
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-
-  const formSubmitHandler = async (e:React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const formSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     if (password !== confirmPassword) {
-      alert('Passwords do not match!');
+      alert("Passwords do not match!");
       return;
     }
     try {
-      const response = await axiosInstance.post('/auth/register', {
+      const response = await axiosInstance.post("/auth/register", {
         name: username,
         email,
         password,
       });
-      alert('Registration successful!');
-      const { accessToken, refreshToken}  = response.data.data;
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
-      router.push('/dashboard');
-
+      alert("Registration successful!");
+      const { accessToken, refreshToken } = response.data.data;
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      router.push("/dashboard");
     } catch (error) {
-      if(axios.isAxiosError(error)) {
-        console.error('There was an error registering!', error);
-        alert(error?.response?.data.message || 'Registration failed!');
+      if (axios.isAxiosError(error)) {
+        console.error("There was an error registering!", error);
+        alert(error?.response?.data.message || "Registration failed!");
       }
     }
-
-  }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
@@ -46,18 +45,30 @@ export default function Register() {
         <title>Task Management App - Register</title>
       </Head>
 
+      <div className="flex flex-col items-center mb-8">
+        <SiGoogletagmanager className="text-7xl text-gray-700" />
+        <span className="text-3xl font-bold text-gray-700">
+          Task Management App
+        </span>
+      </div>
+
       <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-sm">
-        <div className="flex items-center justify-center mb-4">
-          <h2 className="text-xl font-bold text-gray-700">Register</h2>
-          <img src="/registration.png" alt="Logo" width={40} height={40} className="ml-2" />
+        <div className="flex flex-col items-center justify-center mb-4">
+          <h2 className="text-2xl font-bold text-gray-700">
+            Create an acoount
+          </h2>
+          <p className="text-gray-500">Get ahead, get productive!</p>
         </div>
-        <form onSubmit={formSubmitHandler}>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
+        <form className="flex flex-col gap-4" onSubmit={formSubmitHandler}>
+          <div>
+            <label
+              className="block text-gray-700 text-sm font-semibold mb-2"
+              htmlFor="username"
+            >
               Username
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="block w-full"
               id="username"
               type="text"
               placeholder="Username"
@@ -65,8 +76,11 @@ export default function Register() {
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+          <div>
+            <label
+              className="block text-gray-700 text-sm font-semibold mb-2"
+              htmlFor="email"
+            >
               Email
             </label>
             <input
@@ -78,12 +92,15 @@ export default function Register() {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+          <div>
+            <label
+              className="block text-gray-700 text-sm font-semibold mb-2"
+              htmlFor="password"
+            >
               Password
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+              className="w-full block"
               id="password"
               type="password"
               placeholder="********"
@@ -91,12 +108,15 @@ export default function Register() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirmPassword">
+          <div>
+            <label
+              className="block text-gray-700 text-sm font-semibold mb-2"
+              htmlFor="confirmPassword"
+            >
               Confirm Password
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+              className="w-full block"
               id="confirmPassword"
               type="password"
               placeholder="********"
@@ -105,14 +125,19 @@ export default function Register() {
             />
           </div>
           <div className="flex items-center justify-between">
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              type="submit"
-            >
+            <button className="btn w-full" type="submit">
               Register
             </button>
           </div>
         </form>
+        <div className="mt-4">
+          <p className="text-gray-500 text-sm text-center">
+            Been here?{" "}
+            <Link className="link" href={"/login"}>
+              Login Now
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

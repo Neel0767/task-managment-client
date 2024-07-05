@@ -1,8 +1,8 @@
-import Head from 'next/head';
-import { useState, useEffect, ChangeEvent } from 'react';
-import { FaUsers } from 'react-icons/fa';
-import Layout from '@/layout/mainlayout';
-import axios from '@/utils/axiosInstance';
+import Head from "next/head";
+import { useState, useEffect, ChangeEvent } from "react";
+import { FaUsers } from "react-icons/fa";
+import Layout from "@/layout/mainlayout";
+import axios from "@/utils/axiosInstance";
 
 interface Member {
   id: string;
@@ -25,9 +25,9 @@ interface User {
 export default function TeamPage() {
   const [teams, setTeams] = useState<Team[]>([]);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
-  const [newTeam, setNewTeam] = useState<Omit<Team, 'id'>>({
-    name: '',
-    description: '',
+  const [newTeam, setNewTeam] = useState<Omit<Team, "id">>({
+    name: "",
+    description: "",
     members: [],
   });
   const [token, setToken] = useState<string | null>(null);
@@ -35,7 +35,7 @@ export default function TeamPage() {
 
   // Fetch the access token from localStorage
   useEffect(() => {
-    const storedToken = localStorage.getItem('accessToken');
+    const storedToken = localStorage.getItem("accessToken");
     setToken(storedToken);
   }, []);
 
@@ -44,10 +44,10 @@ export default function TeamPage() {
     const fetchTeams = async () => {
       if (token) {
         try {
-          const res = await axios.get<{ data: Team[] }>('http://localhost:5000/teams');
+          const res = await axios.get<{ data: Team[] }>("/teams");
           setTeams(res.data.data);
         } catch (err) {
-          console.error('Error fetching teams:', err);
+          console.error("Error fetching teams:", err);
         }
       }
     };
@@ -59,10 +59,10 @@ export default function TeamPage() {
   useEffect(() => {
     const fetchUserIds = async () => {
       try {
-        const res = await axios.get<{ data: User[] }>('http://localhost:5000/get-users');
-        setUserIds(res.data.data.map(user => user.id));
+        const res = await axios.get<{ data: User[] }>("/get-users");
+        setUserIds(res.data.data.map((user) => user.id));
       } catch (err) {
-        console.error('Error fetching user IDs:', err);
+        console.error("Error fetching user IDs:", err);
       }
     };
 
@@ -72,15 +72,19 @@ export default function TeamPage() {
   // Fetch team details by ID
   const fetchTeamDetails = async (teamId: string) => {
     try {
-      const res = await axios.get<{ data: Team }>(`http://localhost:5000/teams/${teamId}`);
+      const res = await axios.get<{ data: Team }>(`/teams/${teamId}`);
       setSelectedTeam(res.data.data);
     } catch (err) {
-      console.error('Error fetching team details:', err);
+      console.error("Error fetching team details:", err);
     }
   };
 
   // Handle input changes for new team form
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>, index: number, field: keyof Member) => {
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement>,
+    index: number,
+    field: keyof Member
+  ) => {
     const { value } = e.target;
     const updatedMembers = [...newTeam.members];
     updatedMembers[index][field] = value;
@@ -102,19 +106,22 @@ export default function TeamPage() {
       const teamData = {
         name: newTeam.name,
         description: newTeam.description,
-        members: newTeam.members.map(member => member.id), // Use member IDs fetched from /get-users
+        members: newTeam.members.map((member) => member.id), // Use member IDs fetched from /get-users
       };
-      const res = await axios.post<{ data: Team }>('http://localhost:5000/teams', teamData);
-      console.log('Team added:', res.data.data);
+      const res = await axios.post<{ data: Team }>(
+        "http://localhost:5000/teams",
+        teamData
+      );
+      console.log("Team added:", res.data.data);
       setTeams([...teams, res.data.data]);
       setNewTeam({
-        name: '',
-        description: '',
+        name: "",
+        description: "",
         members: [],
       });
       window.location.reload();
     } catch (err) {
-      console.error('Error adding team:', err);
+      console.error("Error adding team:", err);
     }
   };
 
@@ -164,9 +171,9 @@ export default function TeamPage() {
                     Team Members:
                   </h3>
                   <ul className="list-disc list-inside">
-                    {selectedTeam.members.map((member, index) => (
+                    {selectedTeam.users?.map((member, index) => (
                       <li key={index} className="text-gray-700">
-                        {member.name} - {member.role} (Project: {member.project})
+                        {member.name}
                       </li>
                     ))}
                   </ul>
@@ -176,7 +183,9 @@ export default function TeamPage() {
           )}
 
           <div className="bg-white p-6 rounded-lg shadow-md mt-8">
-            <h2 className="text-xl font-bold text-gray-700 mb-4">Add New Team</h2>
+            <h2 className="text-xl font-bold text-gray-700 mb-4">
+              Add New Team
+            </h2>
             <div className="flex flex-col space-y-4">
               <div>
                 <label className="text-lg font-semibold text-gray-700">
@@ -200,11 +209,8 @@ export default function TeamPage() {
                   className="mt-1 p-2 border rounded-lg w-full"
                 />
               </div>
-              
-              <button
-                onClick={handleAddTeam}
-                className="mt-4 p-2 bg-green-500 text-white rounded-lg"
-              >
+
+              <button onClick={handleAddTeam} className="mt-4 btn !p-2">
                 Add Team
               </button>
             </div>

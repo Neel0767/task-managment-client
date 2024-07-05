@@ -1,8 +1,9 @@
 // pages/task/index.tsx
-import Head from 'next/head';
-import { useState, ChangeEvent } from 'react';
-import { FaEdit, FaTrashAlt } from 'react-icons/fa';
-import Layout from '@/layout/mainlayout';
+import Head from "next/head";
+import { useState, ChangeEvent } from "react";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import Layout from "@/layout/mainlayout";
+import { IoCloseSharp } from "react-icons/io5";
 
 interface Task {
   id: number;
@@ -13,12 +14,17 @@ interface Task {
 
 export default function Tasks() {
   const [tasks, setTasks] = useState<Task[]>([
-    { id: 1, priority: 'High', status: 'In Progress', name: 'Project Alpha' },
-    { id: 2, priority: 'Medium', status: 'Pending', name: 'Project Beta' },
-    { id: 3, priority: 'Low', status: 'Done', name: 'Project Gamma' },
+    { id: 1, priority: "High", status: "In Progress", name: "Project Alpha" },
+    { id: 2, priority: "Medium", status: "Pending", name: "Project Beta" },
+    { id: 3, priority: "Low", status: "Done", name: "Project Gamma" },
   ]);
 
-  const [newTask, setNewTask] = useState<Task>({ id: 0, priority: '', status: '', name: '' });
+  const [newTask, setNewTask] = useState<Task>({
+    id: 0,
+    priority: "",
+    status: "",
+    name: "",
+  });
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -35,7 +41,7 @@ export default function Tasks() {
 
   const handleAddTask = () => {
     setTasks([...tasks, newTask]);
-    setNewTask({ id: 0, priority: '', status: '', name: '' });
+    setNewTask({ id: 0, priority: "", status: "", name: "" });
   };
 
   const handleEditTask = (task: Task) => {
@@ -44,30 +50,28 @@ export default function Tasks() {
 
   const handleUpdateTask = () => {
     if (editingTask) {
-      setTasks(tasks.map(t => (t.id === editingTask.id ? editingTask : t)));
+      setTasks(tasks.map((t) => (t.id === editingTask.id ? editingTask : t)));
       setEditingTask(null);
     }
   };
 
   const handleDeleteTask = (taskId: number) => {
-    setTasks(tasks.filter(t => t.id !== taskId));
+    setTasks(tasks.filter((t) => t.id !== taskId));
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
+    <div className="flex flex-col min-h-screen">
       <Head>
         <title>Tasks - Task Management App</title>
       </Head>
 
-      <div className="flex items-center justify-center mb-8 mt-4">
-        <span className="text-3xl font-bold text-gray-700">Task Management App</span>
-      </div>
-
       <div className="flex max-w-7xl">
-        <main className="flex-1 p-6">
-          <h2 className="text-xl font-bold text-gray-700 mb-4">Task Management</h2>
+        <main className="flex-1">
+          <h2 className="text-2xl font-bold text-gray-700 mb-4">Tasks</h2>
           <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-            <h3 className="text-lg font-bold text-gray-700 mb-4">Add New Task</h3>
+            <h3 className="text-lg font-bold text-gray-700 mb-4">
+              Add New Task
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input
                 type="text"
@@ -101,7 +105,7 @@ export default function Tasks() {
                 onChange={handleInputChange}
                 className="p-2 border rounded"
               />
-              <button onClick={handleAddTask} className="p-2 bg-blue-500 text-white rounded">
+              <button onClick={handleAddTask} className="!p-2 btn">
                 Add Task
               </button>
             </div>
@@ -109,7 +113,17 @@ export default function Tasks() {
 
           {editingTask && (
             <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-              <h3 className="text-lg font-bold text-gray-700 mb-4">Edit Task</h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-700">Edit Task</h3>
+                <button
+                  onClick={() => {
+                    setEditingTask(false);
+                  }}
+                  className="btn !bg-red-500 hover:!bg-red-600"
+                >
+                  <IoCloseSharp className="text-white text-xl" />
+                </button>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input
                   type="text"
@@ -143,7 +157,7 @@ export default function Tasks() {
                   onChange={handleEditChange}
                   className="p-2 border rounded"
                 />
-                <button onClick={handleUpdateTask} className="p-2 bg-green-500 text-white rounded">
+                <button onClick={handleUpdateTask} className="!p-2 btn">
                   Update Task
                 </button>
               </div>
@@ -171,10 +185,16 @@ export default function Tasks() {
                       <td className="py-2 px-4 border">{task.status}</td>
                       <td className="py-2 px-4 border">{task.name}</td>
                       <td className="py-2 px-4 border flex space-x-2">
-                        <button onClick={() => handleEditTask(task)} className="p-2 bg-yellow-500 text-white rounded">
+                        <button
+                          onClick={() => handleEditTask(task)}
+                          className="p-2 bg-yellow-500 text-white rounded"
+                        >
                           <FaEdit />
                         </button>
-                        <button onClick={() => handleDeleteTask(task.id)} className="p-2 bg-red-500 text-white rounded">
+                        <button
+                          onClick={() => handleDeleteTask(task.id)}
+                          className="p-2 bg-red-500 text-white rounded"
+                        >
                           <FaTrashAlt />
                         </button>
                       </td>

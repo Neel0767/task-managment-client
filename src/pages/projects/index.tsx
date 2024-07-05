@@ -1,10 +1,9 @@
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 import Layout from "@/layout/mainlayout";
-import { FaPlus } from 'react-icons/fa';
-import { useState, useEffect, ChangeEvent } from 'react';
-import axios from '@/utils/axiosInstance';
-import type { AxiosResponse } from 'axios';
-
+import { FaPlus } from "react-icons/fa";
+import { useState, useEffect, ChangeEvent } from "react";
+import axios from "@/utils/axiosInstance";
+import type { AxiosResponse } from "axios";
 
 interface Project {
   id: number;
@@ -18,17 +17,19 @@ export default function Projects() {
   const router = useRouter();
   const { projectId } = router.query;
   const [projects, setProjects] = useState<Project[]>([]);
-  const [newProject, setNewProject] = useState<Omit<Project, 'id'>>({
-    title: '',
-    description: '',
-    assignedTeam: '',
-    status: '',
+  const [newProject, setNewProject] = useState<Omit<Project, "id">>({
+    title: "",
+    description: "",
+    assignedTeam: "",
+    status: "",
   });
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res: AxiosResponse<{ data: Project[] }> = await axios.get('http://localhost:5000/projects');
+        const res: AxiosResponse<{ data: Project[] }> = await axios.get(
+          "/projects"
+        );
         setProjects(res.data.data);
       } catch (err) {
         console.log(err);
@@ -45,9 +46,17 @@ export default function Projects() {
 
   const handleAddProject = async () => {
     try {
-      const response: AxiosResponse<{ data: Project }> = await axios.post('http://localhost:5000/projects', newProject);
+      const response: AxiosResponse<{ data: Project }> = await axios.post(
+        "http://localhost:5000/projects",
+        newProject
+      );
       setProjects([...projects, response.data.data]);
-      setNewProject({ title: '', description: '', assignedTeam: '', status: '' });
+      setNewProject({
+        title: "",
+        description: "",
+        assignedTeam: "",
+        status: "",
+      });
     } catch (err) {
       console.log(err);
     }
@@ -69,23 +78,27 @@ export default function Projects() {
               </tr>
             </thead>
             <tbody className="text-gray-700">
-              {projects.length ? projects.map((data) => (
-                <tr key={data.id}>
-                  <td className="py-2 px-4 border">{data.title}</td>
-                  <td className="py-2 px-4 border">{data.description}</td>
-                  <td className="py-2 px-4 border">{data.assignedTeam}</td>
-                  <td className="py-2 px-4 border">{data.status}</td>
-                  <td className="py-2 px-4 border">
-                    <a href={`/projects/${data.id}`}>
-                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold p-4">
-                      View Details
-                    </button>
-                    </a>
-                  </td>
-                </tr>
-              )) : (
+              {projects.length ? (
+                projects.map((data) => (
+                  <tr key={data.id}>
+                    <td className="py-2 px-4 border">{data.title}</td>
+                    <td className="py-2 px-4 border">{data.description}</td>
+                    <td className="py-2 px-4 border">{data.assignedTeam}</td>
+                    <td className="py-2 px-4 border">{data.status}</td>
+                    <td className="py-2 px-4 border">
+                      <a href={`/projects/${data.id}`}>
+                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold p-4">
+                          View Details
+                        </button>
+                      </a>
+                    </td>
+                  </tr>
+                ))
+              ) : (
                 <tr>
-                  <td colSpan={5} className="text-center py-4">No Data</td>
+                  <td colSpan={5} className="text-center py-4">
+                    No Data
+                  </td>
                 </tr>
               )}
             </tbody>
@@ -124,7 +137,8 @@ export default function Projects() {
             onChange={handleInputChange}
             className="p-2 border rounded"
           />
-          <button type="button"
+          <button
+            type="button"
             className="p-2 flex justify-center items-center bg-blue-500 text-white rounded"
             onClick={handleAddProject}
           >
@@ -138,9 +152,5 @@ export default function Projects() {
 }
 
 Projects.getLayout = function getLayout(page: React.ReactNode) {
-  return (
-    <Layout>
-      {page}
-    </Layout>
-  );
+  return <Layout>{page}</Layout>;
 };
