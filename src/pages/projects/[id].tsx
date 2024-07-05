@@ -58,29 +58,13 @@ export default function ProjectDetail() {
     if (!selectedTask) return;
 
     try {
-      const res = await axios.put(
-        `http://localhost:5000/tasks/${selectedTask.id}`,
+      const res = await axios.put(`/tasks/${selectedTask.id}`,
         selectedTask
       );
       console.log("Task updated:", res.data);
       setEditModalOpen(false);
     } catch (err) {
       console.error("Error updating task:", err);
-    }
-  };
-
-  const handleDeleteTask = async (taskId: string) => {
-    try {
-      await axios.delete(`http://localhost:5000/tasks/${taskId}`);
-      console.log("Task deleted:", taskId);
-      setViewModalOpen(false);
-      // Refresh the project to update the tasks list
-      const res = await axios.get(
-        `http://localhost:5000/projects/${projectId}`
-      );
-      setProject(res.data.data);
-    } catch (err) {
-      console.error("Error deleting task:", err);
     }
   };
 
@@ -98,7 +82,7 @@ export default function ProjectDetail() {
       };
 
       const res = await axios.put(
-        `http://localhost:5000/projects/${projectId}`,
+        `/projects/${projectId}`,
         updatedProject
       );
       console.log("Project updated:", res.data);
@@ -110,7 +94,7 @@ export default function ProjectDetail() {
 
   const handleDeleteProject = async () => {
     try {
-      await axios.delete(`http://localhost:5000/projects/${projectId}`);
+      await axios.delete(`/projects/${projectId}`);
       console.log("Project deleted:", projectId);
       router.push("/projects"); // Redirect to projects list after deletion
     } catch (err) {

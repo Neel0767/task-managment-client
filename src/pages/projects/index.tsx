@@ -47,7 +47,7 @@ export default function Projects() {
   const handleAddProject = async () => {
     try {
       const response: AxiosResponse<{ data: Project }> = await axios.post(
-        "http://localhost:5000/projects",
+        "/projects",
         newProject
       );
       setProjects([...projects, response.data.data]);

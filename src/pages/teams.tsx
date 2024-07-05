@@ -7,15 +7,13 @@ import axios from "@/utils/axiosInstance";
 interface Member {
   id: string;
   name: string;
-  role: string;
-  project: string;
 }
 
 interface Team {
   id: string;
   name: string;
   description: string;
-  members: Member[];
+  users: Member[];
 }
 
 interface User {
@@ -28,7 +26,7 @@ export default function TeamPage() {
   const [newTeam, setNewTeam] = useState<Omit<Team, "id">>({
     name: "",
     description: "",
-    members: [],
+    users: [],
   });
   const [token, setToken] = useState<string | null>(null);
   const [userIds, setUserIds] = useState<string[]>([]);
@@ -86,9 +84,9 @@ export default function TeamPage() {
     field: keyof Member
   ) => {
     const { value } = e.target;
-    const updatedMembers = [...newTeam.members];
+    const updatedMembers = [...newTeam.users];
     updatedMembers[index][field] = value;
-    setNewTeam({ ...newTeam, members: updatedMembers });
+    setNewTeam({ ...newTeam, users: updatedMembers });
   };
 
   // Handle input changes for new team name and description
@@ -106,10 +104,10 @@ export default function TeamPage() {
       const teamData = {
         name: newTeam.name,
         description: newTeam.description,
-        members: newTeam.members.map((member) => member.id), // Use member IDs fetched from /get-users
+        members: newTeam.users.map((users) => users.id), // Use member IDs fetched from /get-users
       };
       const res = await axios.post<{ data: Team }>(
-        "http://localhost:5000/teams",
+        "/teams",
         teamData
       );
       console.log("Team added:", res.data.data);
@@ -117,7 +115,7 @@ export default function TeamPage() {
       setNewTeam({
         name: "",
         description: "",
-        members: [],
+        users: [],
       });
       window.location.reload();
     } catch (err) {

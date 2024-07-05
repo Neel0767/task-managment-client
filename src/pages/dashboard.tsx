@@ -14,7 +14,7 @@ type DashboardData = {
   tasksNumber: number;
 };
 const initialData: DashboardData = {
-  id: 1,
+  id: "1",
   name: "User",
   projectsNumber: 0,
   tasksNumber: 0,
