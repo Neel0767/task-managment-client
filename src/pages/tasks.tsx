@@ -115,14 +115,6 @@ export default function Tasks() {
             <div className="bg-white p-6 rounded-lg shadow-md mb-8">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold text-gray-700">Edit Task</h3>
-                <button
-                  onClick={() => {
-                    setEditingTask(false);
-                  }}
-                  className="btn !bg-red-500 hover:!bg-red-600"
-                >
-                  <IoCloseSharp className="text-white text-xl" />
-                </button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input
